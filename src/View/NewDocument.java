@@ -3,6 +3,7 @@ import Controller.FontColorActionListener;
 import Controller.FontStyleActionListener;
 import Controller.MyStyleListener;
 import Controller.FontSizeActionListener;
+import Controller.InsertImageActionListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,13 +15,15 @@ public class NewDocument extends JFrame {
     JButton applyStyle;//to apply font style and font size
     JButton applyColorBtn; // to apply color using color chooser
     JMenuBar menuBar;
-    JMenu fileMenu, fontMenu, styleMenu;
+    JMenu fileMenu, fontMenu, styleMenu, insertMenu;
     JMenuItem saveAsPDF, saveAsWord;
     JMenuItem font12, font14, font16;
+    JMenuItem insertImage;
     MyStyleListener styleListener; // Controller class to manage all changings in the text.
     FontSizeActionListener fontSizeActionListener;
     FontStyleActionListener fontStyleActionListener;
     FontColorActionListener fontColorActionListener;
+    InsertImageActionListener insertImageActionListener;
     JMenuItem arialStyle, timesRomanStyle, courierStyle;
     JTextPane textPane; // To write text in the document.
     public NewDocument(){
@@ -68,12 +71,22 @@ public class NewDocument extends JFrame {
         styleMenu.add(timesRomanStyle);
         styleMenu.add(courierStyle);
 
+        this.insertMenu = new JMenu("Insert");
+        this.menuBar.add(insertMenu);
+
+        this.insertImage = new JMenuItem("Insert Image");
+
+        insertImageActionListener = new InsertImageActionListener(this);
+        insertImage.addActionListener(insertImageActionListener);
+        insertMenu.add(insertImage);
+
         this.textPane = new JTextPane();
+        this.textPane.setContentType("text/html");
 
         this.setLayout(new BorderLayout());
-        this.setSize(500, 500);
+        this.setSize(700, 700);
         this.setLocationRelativeTo(null);
-        this.add(this.textPane, BorderLayout.CENTER);
+        this.add(new JScrollPane(this.textPane), BorderLayout.CENTER);
 
 
         southPanel = new JPanel(new FlowLayout());
