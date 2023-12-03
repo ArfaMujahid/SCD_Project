@@ -182,6 +182,11 @@ public class NewDocument extends JFrame {
         checkSpellingBtn.addActionListener(new CheckSpellingActionListener(this));
 
         southPanel.add(checkSpellingBtn);
+        
+        WordCountActionListener wordCountListener = new WordCountActionListener(this);
+        JMenuItem wordCountItem = new JMenuItem("Word Count");
+        wordCountItem.addActionListener(wordCountListener);
+        this.menuBar.add(wordCountItem);
 
     }
 
