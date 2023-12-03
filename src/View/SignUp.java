@@ -21,44 +21,60 @@ public class SignUp extends JFrame implements ActionListener {
 
     //---------------------------------------------------------------------------------------------------------
     public void createSignUpPage(final Connection conn) {
-        this.connection = conn;
-        l1 = new JLabel("Create Username: ");
-        l2 = new JLabel("Create Password: ");
-        l3 = new JLabel("Confirm Password: ");
-        uName = new JTextField(20);
-        pass = new JPasswordField(20);
-        cPass = new JPasswordField(20);
-        JPanel jp1 = new JPanel(new FlowLayout());
-        jp1.add(l1);
-        jp1.add(uName);
-        JPanel jp2 = new JPanel(new FlowLayout());
-        jp2.add(l2);
-        jp2.add(pass);
-        JPanel jp3 = new JPanel(new FlowLayout());
-        jp3.add(l3);
-        jp3.add(cPass);
-        signIn = new JButton("SignUp");
-        signIn.addActionListener(this);
-        p1 = new JPanel();
-        p1.setLayout(new BoxLayout(p1, BoxLayout.Y_AXIS));
-        p1.add(jp1);
-        p1.add(jp2);
-        p1.add(jp3);
-        p1.add(signIn);
+             this.connection = conn;
+            l1 = new JLabel("Create Username: ");
+            l2 = new JLabel("Create Password: ");
+            l3 = new JLabel("Confirm Password: ");
+            uName = new JTextField(20);
+            pass = new JPasswordField(20);
+            cPass = new JPasswordField(20);
+            signIn = new JButton("SignUp");
+            signIn.addActionListener(this);
 
-        //Frame
-        setLayout(new GridLayout(4, 1));
-        add(new JPanel());
-        add(p1);
-        setTitle("SignUp Page");
-        setVisible(true);
-        setSize(500, 600);
-        addWindowListener(new MyWindowListener());
-        setLocationRelativeTo(null);
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
+            // Set up the left panel with a GridBagLayout
+            p1 = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.insets = new Insets(0, 0, 20, 0); // Add spacing between components
 
-    //---------------------------------------------------------------------------------------------------------
+            p1.add(l1, gbc);
+            p1.add(uName, gbc);
+            p1.add(l2, gbc);
+            p1.add(pass, gbc);
+            p1.add(l3, gbc);
+            p1.add(cPass, gbc);
+          p1.add(signIn,gbc);
+            // Set background color for the entire content pane
+            p1.setBackground(new Color(255, 240, 245)); // Lavender Blush
+
+            // Create a right panel
+            JPanel rightPanel = new JPanel(new BorderLayout());
+            rightPanel.setBackground(Color.WHITE);
+            JLabel smartScriptLabel = new JLabel("SmartScript");
+            smartScriptLabel.setHorizontalAlignment(JLabel.CENTER);
+            smartScriptLabel.setFont(new Font("Arial", Font.BOLD, 20));
+            smartScriptLabel.setForeground(Color.WHITE);
+            JPanel smartScriptPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 180));
+            smartScriptPanel.setBackground(new Color(70, 130, 180));
+            smartScriptPanel.add(smartScriptLabel);
+            rightPanel.add(smartScriptPanel, BorderLayout.CENTER);
+
+            // Create a JSplitPane
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, p1, rightPanel);
+            splitPane.setDividerLocation(200);
+
+            // Frame
+            setLayout(new GridLayout(1, 1));
+            add(splitPane);
+            setTitle("SignUp Page");
+            setSize(500, 600);
+            addWindowListener(new MyWindowListener());
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setVisible(true);
+        }
+
+        //---------------------------------------------------------------------------------------------------------
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
@@ -102,7 +118,7 @@ public class SignUp extends JFrame implements ActionListener {
 
     //---------------------------------------------------------------------------------------------------------
     private void saveData() throws SQLException {
-        String query = "select name from users where name = '" + uName.getText() + "';";
+        String query = "select username from users where username = '" + uName.getText() + "';";
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery(query);
         if (!resultSet.next()) {
