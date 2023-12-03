@@ -1,9 +1,13 @@
 package View;
+
 import Controller.LoadFileActionListener;
 import Model.DatabaseWork;
 import Model.GetFileData;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,65 +16,85 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.util.List;
 
-//Class to show the list of documents that logged in user has made
-// and show option to create new document.
 public class FavouriteDocumentsList extends JFrame {
     private JButton createNewDocumentBtn;
-    private JButton[] createdDocumentListBtn;
-    private JPanel panel;//implementation is remaining from initilization.
+    private JTable documentTable;
+    private DefaultTableModel tableModel;
+    private JScrollPane tableScrollPane;
     private Connection connection;
     private String name;
-    LoadFileActionListener loadFileActionListener;
+    private LoadFileActionListener loadFileActionListener;
+    private GetFileData getFileData; // Add this line
 
-    public FavouriteDocumentsList(Connection conn, final String name){
-        GetFileData getFileData = new GetFileData();
-        getFileData.setConnection(conn);
+    public FavouriteDocumentsList(Connection conn, final String name) {
+        getFileData = new GetFileData(); // Initialize GetFileData
+        getFileData.setConnection(conn); // Set the connection for GetFileData
         DatabaseWork DB = new DatabaseWork(conn);
-        int count = DB.getTotalFavouriteDocuments(name);//Make buttons equal to this count;
-        //Count shows total document created by a user.
+        int count = DB.getTotalDocuments(name);
+
         this.name = name;
         this.connection = conn;
         this.setLocationRelativeTo(null);
-        this.createNewDocumentBtn = new JButton("Create Document");
-        this.setSize(new Dimension(500, 500));
 
-        this.addWindowListener(new WindowAdapter() { //to remove this frame on click cross button.
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
+        // Create a table model and set column names
+        String[] columnNames = {"Document Name"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        documentTable = new JTable(tableModel);
 
-        this.createNewDocumentBtn.addActionListener(new ActionListener() {
+        // Set up the table with a scroll pane
+        tableScrollPane = new JScrollPane(documentTable);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        createNewDocumentBtn = new JButton("Create Document");
+        createNewDocumentBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new NewDocument(FavouriteDocumentsList.this.connection, name).display("");
             }
         });
+        createNewDocumentBtn.setBackground(new Color(128, 179, 255));
+        buttonPanel.add(createNewDocumentBtn);
 
-        this.setLayout(new GridLayout(count + 1, 1));
-        this.add(this.createNewDocumentBtn);
-        if(count != 0){
-            this.createdDocumentListBtn = new JButton[count]; //initialize array of buttons
-            //now add buttons of list in the frame.
-            List<String> documentNames = DB.getFavouriteDocumentNames(this.name); //Getting names of documents that
-            //logged in user made recently.
-            int i = 0;
+        // Set up the layout using BorderLayout
+        this.setLayout(new BorderLayout());
+        this.add(tableScrollPane, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.PAGE_END);  // Use PAGE_END for the button panel
+
+        if (count != 0) {
             loadFileActionListener = new LoadFileActionListener(this.connection, this.name);
-            for(String names : documentNames){ //Loop initilizing each index of button array with
-                //new created Button and adding action listener to each button.
-                JButton btn = new JButton("Open " + names);
-                btn.addActionListener(this.loadFileActionListener);
-                createdDocumentListBtn[i++] = btn;
+            List<String> documentNames = DB.getFavouriteDocumentNames(this.name);
+
+            for (String name2 : documentNames) {
+                // Add each document name to the table model
+                tableModel.addRow(new Object[]{name2});
             }
-            for(int j = 0; j < count; j++){ //Loop adding buttons to open recent made docuemnts
-                this.add(createdDocumentListBtn[j]);
-            }
+
+            documentTable.getSelectionModel().addListSelectionListener(e -> {
+                int selectedRow = documentTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    String selectedDocumentName = (String) tableModel.getValueAt(selectedRow, 0);
+                    loadFileActionListener.actionPerformed(new ActionEvent(documentTable, ActionEvent.ACTION_PERFORMED, selectedDocumentName));
+                }
+            });
+
+
+
+
         }
 
+
+        this.setSize(new Dimension(500, 500));
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
     }
 
-    public void displayList(){
+    public void displayList() {
         this.setVisible(true);
     }
+
 }
