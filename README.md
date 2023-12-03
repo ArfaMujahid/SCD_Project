@@ -26,8 +26,7 @@
   -  Document has fonts,colour,bold ,etc
   -  User can also save as word,pdf or text
   -  Signup can be used to Sign a new user up 
-  -  
-
+    
 
     
 
