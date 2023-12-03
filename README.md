@@ -4,7 +4,8 @@
 - View contains Gui
 - Controller has action listeners of all gui
 - Model has classes with business logic
-  # How to Run
+
+# How to Run
 
 - Run main.java file present in the project to run the whole project
 - login page appears after running main
@@ -18,7 +19,7 @@
   - Include the jar files in lib and jar folder.
   - If using intellij you need to add the jar files using (File >> project Structure >> Modules >> "+" >> add jar files
 
-  # Project Structure 
+ # Project Structure 
 
   - Login takes user to home page
   -  User can create new documents , open exisiting or favourite documents
