@@ -5,3 +5,6 @@
 - View contains Gui
 - Controller has action listeners of all gui
 - Model has classes with business logic 
+- Change the password in Main
+- You need the mysql workbench
+- Include the jar files in lib and jar folder.
